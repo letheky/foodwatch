@@ -258,8 +258,43 @@
 <div class="toast" id="toast"></div>
 <div class="modal hide" id="modal"><div class="modal-box"><div class="modal-head"><b id="modalTitle"></b><button class="ghost sm" id="modalClose">✕ Đóng</button></div><div id="modalBody"></div></div></div>
 
+<!-- Login overlay -->
+<div id="loginOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:32px 28px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.18);">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:#ff6b2c;display:grid;place-items:center;font-size:18px;">🍜</div>
+      <b style="font-size:17px;">FoodWatch</b>
+    </div>
+    <p style="color:#6b7480;font-size:13px;margin:0 0 20px;">Nhập mật khẩu để truy cập dashboard.</p>
+    <input id="loginInput" type="password" placeholder="Access token..." style="width:100%;padding:10px 13px;border:1px solid #e7e9ee;border-radius:9px;font-size:14px;margin-bottom:12px;" />
+    <button id="loginBtn" style="width:100%;padding:11px;background:#ff6b2c;color:#fff;border:0;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">Đăng nhập</button>
+    <p id="loginErr" style="color:#dc2626;font-size:12.5px;margin:8px 0 0;display:none;">Token không đúng, thử lại.</p>
+  </div>
+</div>
+
 <script>
-const API='/api/food'; const tok=localStorage.getItem('fw_token'); const H=tok?{'x-auth-token':tok}:{};
+const API='/api/food'; let tok=localStorage.getItem('fw_token'); let H=tok?{'x-auth-token':tok}:{};
+
+// Login overlay
+(function(){
+  const overlay=document.getElementById('loginOverlay');
+  const input=document.getElementById('loginInput');
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginErr');
+  if(!tok){ overlay.style.display='flex'; input.focus(); }
+  async function tryLogin(){
+    const val=input.value.trim(); if(!val) return;
+    btn.disabled=true; btn.textContent='Đang kiểm tra…';
+    const r=await fetch(API+'/restaurants',{headers:{'x-auth-token':val}}).catch(()=>null);
+    if(r && r.ok){
+      localStorage.setItem('fw_token',val); location.reload();
+    } else {
+      err.style.display='block'; btn.disabled=false; btn.textContent='Đăng nhập'; input.select();
+    }
+  }
+  btn.onclick=tryLogin;
+  input.onkeydown=e=>{ if(e.key==='Enter') tryLogin(); };
+})();
 const vnd=n=>(n||n===0)?Number(n).toLocaleString('vi-VN')+'đ':'—';
 const nf=n=>(n||n===0)?Number(n).toLocaleString('vi-VN'):'—';
 const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
