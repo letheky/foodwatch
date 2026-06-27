@@ -1,0 +1,22 @@
+{
+  "name": "foodwatch",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Theo dõi đối thủ trên ShopeeFood (MVP) — dựng từ base ShopWatch (Shopee).",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node test/normalize.test.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "playwright-core": "^1.60.0",
+    "uuid": "^9.0.0"
+  },
+  "optionalDependencies": {
+    "patchright": "^1.60.0"
+  }
+}
